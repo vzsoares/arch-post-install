@@ -13,6 +13,9 @@ fi
 if ! [ -x "$(command -v npm)" ] || ! [ -x "$(command -v node)" ]; then
 	echo "Installing NVM"
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 fi
 
 if ! command -v zsh &> /dev/null; then
@@ -25,10 +28,10 @@ export PATH="$PATH":"$NPM_HOME"/bin
 npm config set prefix "$NPM_HOME"
 
 echo "Fetching mirrors"
-sudo pacman-mirrors --fasttrack --noconfirm 
+sudo pacman-mirrors --fasttrack 
 
 echo "Upgrading system pkgs"
-sudo pacman -Syyu --noconfirm
+yes | sudo pacman -Syyu
 
 echo "Installing personal packages..."
 DATA_LOCAL=./pkgs
