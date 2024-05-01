@@ -48,7 +48,6 @@ for PM in $(ls $DATA_LOCAL); do
 	$INSTALL_CDM $(cat $DATA_LOCAL/"$PM")
 done
 
-echo "TODO auth chrome"
 echo "TODO auth insomina"
 echo "TODO set zsh default"
 echo "TODO verify nvim"
@@ -58,5 +57,3 @@ echo "TODO auth studio 3t"
 echo "TODO auth mysql workbench"
 echo "TODO auth spotify"
 echo "TODO auth aws-cli"
-
-make apply

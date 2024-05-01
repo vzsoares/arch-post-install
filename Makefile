@@ -1,4 +1,4 @@
-ALL: install configure auth
+ALL: install auth configure
 
 install:
 	sh post-install.sh
