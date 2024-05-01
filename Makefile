@@ -1,5 +1,9 @@
-ALL: install
+ALL: install configure auth
 
 install:
 	sh post-install.sh
+auth:
+	sh auth.sh
+configure:
+	sh configure.sh
 

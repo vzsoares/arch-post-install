@@ -1,23 +1,36 @@
 #! /bin/sh
 if ! [ -x "$(command -v yay)" ]; then
+	echo "Installing yay"
 	git clone https://aur.archlinux.org/yay.git
 	cd yay && makepkg -si && cd .. && rm -rf yay
 fi
 
 if ! [ -x "$(command -v pip3)" ]; then
+	echo "Installing pip"
 	yay -Syu python3-pip
 fi
 
 if ! [ -x "$(command -v npm)" ] || ! [ -x "$(command -v node)" ]; then
-	#yay -Syu nodejs npm
+	echo "Installing NVM"
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+fi
+
+if ! command -v zsh &> /dev/null; then
+	echo "Installing zsh"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
 export NPM_HOME="$HOME"/.npm-global
 export PATH="$PATH":"$NPM_HOME"/bin
 npm config set prefix "$NPM_HOME"
 
-echo "Installing system packages..."
+echo "Fetching mirrors"
+sudo pacman-mirrors --fasttrack --noconfirm 
+
+echo "Upgrading system pkgs"
+sudo pacman -Syyu --noconfirm
+
+echo "Installing personal packages..."
 DATA_LOCAL=./pkgs
 for PM in $(ls $DATA_LOCAL); do
 	case $PM in
@@ -35,31 +48,6 @@ for PM in $(ls $DATA_LOCAL); do
 	$INSTALL_CDM $(cat $DATA_LOCAL/"$PM")
 done
 
-if ! command -v zsh &> /dev/null; then
-	echo "Installing zsh"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-fi
-
-if ! "$(gh auth status)" | grep -q "Active account: true"; then
-	echo "need to auth github and bitbucket"
-	gh auth
-fi
-
-CODE_FOLDER=~/Desktop/code
-
-mkdir $CODE_FOLDER
-
-if ! [ -d "$CODE_FOLDER/scripts" ]; then
-	(cd $CODE_FOLDER && gh repo clone vzsoares/scripts)
-fi
-
-(
-	cd $CODE_FOLDER/scripts || exit
-    cp -r nvim/ ~/.config/
-    cp -r tmux/ ~/.config/
-    cp -r .zshrc ~/
-)
-
 echo "TODO auth chrome"
 echo "TODO auth insomina"
 echo "TODO set zsh default"
@@ -69,5 +57,6 @@ echo "TODO config vpn"
 echo "TODO auth studio 3t"
 echo "TODO auth mysql workbench"
 echo "TODO auth spotify"
+echo "TODO auth aws-cli"
 
 make apply
