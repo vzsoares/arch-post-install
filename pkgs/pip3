@@ -2,3 +2,4 @@ ansible
 ipython
 virtualenv
 virtualenvwrapper
+awscli
