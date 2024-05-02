@@ -1,4 +1,5 @@
 # TODO chmod +xwr to all files
+# TODO mv stuff from .zshrc to .profile?
 
 ALL: install auth configure
 

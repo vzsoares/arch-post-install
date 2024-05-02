@@ -1,6 +1,7 @@
 base-devel
 go
-nvim
+neovim
+tmux
 docker
 gparted
 go-tools
