@@ -12,7 +12,8 @@ confirm() {
 }
 #
 
-if ! [ -x "$(command -v yay)" ]; then
+if ! command -v yay; then
+	# TODO consider pamac due to manjaro stability!?
 	echo "Installing yay"
 	sudo pacman -Sy --needed --noconfirm git base-devel
 	git clone https://aur.archlinux.org/yay.git
@@ -21,12 +22,14 @@ fi
 # this may save your life
 # sudo pacman -S --overwrite '/usr/lib/locale/*/*' glibc glibc-locales lib32-glibc
 
-if ! [ -x "$(command -v pip3)" ]; then
-	echo "Installing pip"
-	yay -Syu python-pip
+if ! command -v pip3; then
+	echo "Installing python"
+	curl https://pyenv.run | bash
+	pyenv install 3.10
+	pyenv global 3.10
 fi
 
-if ! [ -x "$(command -v npm)" ] || ! [ -x "$(command -v node)" ]; then
+if ! command -v npm || ! command -v node; then
 	echo "Installing NVM"
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 	export NVM_DIR="$HOME/.nvm"
@@ -36,7 +39,7 @@ if ! [ -x "$(command -v npm)" ] || ! [ -x "$(command -v node)" ]; then
 	nvm use 18
 fi
 
-if ! command -v zsh &> /dev/null; then
+if ! command -v zsh; then
 	echo "Installing zsh"
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
