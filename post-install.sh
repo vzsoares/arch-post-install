@@ -1,13 +1,29 @@
 #! /bin/sh
+
+confirm() {
+	DFT="Are you sure?"
+	MSG="${1:-$DFT}"
+	read -r -p "$MSG [y/N] " RES
+	if [[ "$RES" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+		true
+	else
+		false
+	fi
+}
+#
+
 if ! [ -x "$(command -v yay)" ]; then
 	echo "Installing yay"
+	sudo pacman -Sy --needed --noconfirm git base-devel
 	git clone https://aur.archlinux.org/yay.git
 	cd yay && makepkg -si && cd .. && rm -rf yay
 fi
+# this may save your life
+# sudo pacman -S --overwrite '/usr/lib/locale/*/*' glibc glibc-locales lib32-glibc
 
 if ! [ -x "$(command -v pip3)" ]; then
 	echo "Installing pip"
-	yay -Syu python3-pip
+	yay -Syu python-pip
 fi
 
 if ! [ -x "$(command -v npm)" ] || ! [ -x "$(command -v node)" ]; then
@@ -16,6 +32,8 @@ if ! [ -x "$(command -v npm)" ] || ! [ -x "$(command -v node)" ]; then
 	export NVM_DIR="$HOME/.nvm"
 	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+	nvm install 18
+	nvm use 18
 fi
 
 if ! command -v zsh &> /dev/null; then
@@ -23,15 +41,8 @@ if ! command -v zsh &> /dev/null; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
-export NPM_HOME="$HOME"/.npm-global
-export PATH="$PATH":"$NPM_HOME"/bin
-npm config set prefix "$NPM_HOME"
-
-echo "Fetching mirrors"
-sudo pacman-mirrors --fasttrack 
-
-echo "Upgrading system pkgs"
-yes | sudo pacman -Syyu
+confirm "Fetch mirrors?" && sudo pacman-mirrors --fasttrack || true
+confirm "Full system update?" && sudo pacman -Syyuu --noconfirm || true
 
 echo "Installing personal packages..."
 DATA_LOCAL=./pkgs
@@ -39,7 +50,7 @@ for PM in $(ls $DATA_LOCAL); do
 	case $PM in
 	yay) INSTALL_CDM="-Syu --noconfirm" ;;
 	apt) INSTALL_CDM="install -y" ;;
-	pip3) INSTALL_CDM="install --user" ;;
+	pip3) INSTALL_CDM="install --break-system-packages" ;;
 	npm) INSTALL_CDM="i -g" ;;
 	esac
 

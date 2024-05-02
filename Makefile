@@ -1,3 +1,5 @@
+# TODO chmod +xwr to all files
+
 ALL: install auth configure
 
 install:
