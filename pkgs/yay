@@ -2,7 +2,6 @@ base-devel
 go
 neovim
 nvim-packer-git
-tmux
 docker
 gparted
 go-tools

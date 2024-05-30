@@ -44,6 +44,13 @@ if ! command -v zsh; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
+if ! command -v tmux; then
+	echo "Installing tmux"
+	pacman -S tmux
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+	# might have to chmod +xrw the tpm folder
+fi
+
 confirm "Fetch mirrors?" && sudo pacman-mirrors --fasttrack || true
 confirm "Full system update?" && sudo pacman -Syyuu --noconfirm || true
 
@@ -67,7 +74,7 @@ done
 
 echo "TODO auth insomina"
 echo "TODO set zsh default"
-echo "TODO verify nvim"
+echo "TODO verify nvim / run packerSync after install"
 echo "TODO auth vscode"
 echo "TODO config vpn"
 echo "TODO auth studio 3t"
